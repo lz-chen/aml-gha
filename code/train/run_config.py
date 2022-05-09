@@ -7,12 +7,12 @@ def main(workspace):
     print("Loading compute target")
     compute_target = ComputeTarget(
         workspace=workspace,
-        name="githubcluster"
+        name="cpu-cluster"
     )
 
     # Load script parameters
     print("Loading script parameters")
-    script_params = {
+    script_params = {g
         "--kernel": "linear",
         "--penalty": 1.0
     }
