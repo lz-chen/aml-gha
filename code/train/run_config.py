@@ -12,7 +12,7 @@ def main(workspace):
 
     # Load script parameters
     print("Loading script parameters")
-    script_params = {g
+    script_params = {
         "--kernel": "linear",
         "--penalty": 1.0
     }
