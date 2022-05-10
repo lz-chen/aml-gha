@@ -1,16 +1,8 @@
 # Actions train a model on Azure Machine Learning
 name: aml-train
-on:
+on: 
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    paths:
-      - code/train
-
-  push:
-    branches:
-      - master
-    paths:
-      - code/train
 
   workflow_dispatch:
     inputs:
@@ -23,11 +15,9 @@ on:
       issue-number:
         description: "The issue number from which the slash command was created"
         required: false
-      git-ref:
-        description: "The ref of git branch that triggered the event"
-        required: false
 
-concurrency: train-${{ github.ref }}
+
+concurrency: deployment-refs/pull/${{ github.event.inputs.issue-number }}/head
 
 jobs:
   train:
@@ -36,24 +26,11 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Check Out Repository
       id: checkout_repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
-        fetch-depth: 0
-
-    - name: Debug
-      run: |
-        echo $${{ github.event.inputs.git-ref }}
-        echo $(git log)
-
-    - name: Test comment PR
-      uses: unsplash/comment-on-pr@master
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        msg: "Testing comment..."
-
+        ref: refs/pull/${{ github.event.inputs.issue-number }}/head
+        
     # Connect or Create the Azure Machine Learning Workspace
-    # todo: different workspace for dev/prd
     - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace
       uses: Azure/aml-workspace@v1
@@ -77,7 +54,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
       with:
         msg: "${{ steps.aml_run.outputs.run_metrics }}"
     
@@ -93,6 +70,6 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"

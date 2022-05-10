@@ -42,22 +42,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Check variables
-        env:
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload.slash_command) }}
-        run: |
-          if [ -z "${{ github.event.client_payload.slash_command.model-name }}"]; then echo "model-name is NULL"; exit 1; else echo "model-name is ${{ toJson(github.event.client_payload.slash_command.model-name) }}"; fi;
-          if [ -z "${{ github.event.client_payload.slash_command.model-version }}"]; then echo "model-version is NULL"; exit 1; else echo "model-version is ${{ toJson(github.event.client_payload.slash_command.model-version) }}"; fi;
-          
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Check Out Repository
         id: checkout_repository
         uses: actions/checkout@v2
         with:
-          ref: $${{ github.event.inputs.git-ref }}
-
-      - name: Debug
-        run: echo $${{ github.event.inputs.git-ref }}
+          ref: refs/pull/${{ github.event.inputs.issue-number }}/head
 
       - name: Create URL to the run output
         id: vars
