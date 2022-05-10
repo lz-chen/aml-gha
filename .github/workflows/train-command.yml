@@ -23,6 +23,9 @@ on:
       issue-number:
         description: "The issue number from which the slash command was created"
         required: false
+      git-ref:
+        description: "The ref of git branch that triggered the event"
+        required: false
 
 concurrency: train-${{ github.ref }}
 
@@ -34,6 +37,13 @@ jobs:
     - name: Check Out Repository
       id: checkout_repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Debug
+      run: |
+        echo $${{ github.event.inputs.git-ref }}
+        echo $(git log)
 
     - name: Test comment PR
       uses: unsplash/comment-on-pr@master

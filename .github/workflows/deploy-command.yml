@@ -31,7 +31,12 @@ on:
       issue-number:
         description: "The issue number from which the slash command was created"
         required: false
+      # todo: in the workflow, if git-ref not provided from input, use ${{ github.ref }}
+      git-ref:
+        description: "The ref of git branch that triggered the event"
+        required: false
 
+concurrency: deploy-${{ github.ref }}
 
 jobs:
   deploy:
@@ -48,6 +53,11 @@ jobs:
       - name: Check Out Repository
         id: checkout_repository
         uses: actions/checkout@v2
+        with:
+          ref: $${{ github.event.inputs.git-ref }}
+
+      - name: Debug
+        run: echo $${{ github.event.inputs.git-ref }}
 
       - name: Create URL to the run output
         id: vars
