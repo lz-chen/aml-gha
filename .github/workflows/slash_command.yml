@@ -20,4 +20,3 @@ jobs:
             deploy
           permission: write
           issue-type: pull-request
-          dispatch-type: workflow
