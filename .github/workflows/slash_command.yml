@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:      
     
-      - name: Debug
-        run: |
-         echo $${{ github.ref }}
-         echo $(git log)
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
      
       - name: Check Out Repository
         id: checkout_repository
