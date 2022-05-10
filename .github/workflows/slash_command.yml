@@ -9,7 +9,11 @@ jobs:
   slash_command:
     runs-on: ubuntu-latest
     steps:      
-      
+    
+      - name: Check Out Repository
+        id: checkout_repository
+        uses: actions/checkout@v2
+        
       - name: debug
         run: | 
           git show-ref 
