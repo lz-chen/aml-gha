@@ -9,6 +9,10 @@ on:
         description: "The login of the user that initiated the deployment"
         required: false
         default: ""
+  
+  repository_dispatch:
+    types: [train-command]
+
 
 concurrency: deployment-${{ github.ref }}
 
