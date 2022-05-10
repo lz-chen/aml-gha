@@ -12,7 +12,7 @@ on:
     paths:
       - code/train
 
-  repository_dispatch:
+  workflow_dispatch:
     repository:
       description: "The repository from which the slash command was dispatched"
       required: true
