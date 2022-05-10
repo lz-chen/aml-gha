@@ -10,17 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:      
     
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-     
-      - name: Check Out Repository
-        id: checkout_repository
-        uses: actions/checkout@v2
-        with:
-          ref: $${{ github.ref }}
-          
       - name: Slash Command Dispatch
         id: slash_command
         uses: peter-evans/slash-command-dispatch@v3
@@ -35,6 +24,6 @@ jobs:
           dispatch-type: workflow
           static-args: |
             repository=${{ github.repository }}
-            issue-number=${{ github.event.number }}
+            issue-number=${{ github.issue.number }}
             comment-id=${{ github.event.comment.id }}
-            ref=${{ github.ref }}
+            ref=refs/pull/${{ github.issue.number }}/head
