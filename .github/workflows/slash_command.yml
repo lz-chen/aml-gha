@@ -29,7 +29,6 @@ jobs:
           dispatch-type: workflow
           static-args: |
             repository=${{ github.repository }}
-            issue-number=${{ github.event.number }}
+            issue-number=${{ github.event.issue.number }}
             comment-id=${{ github.event.comment.id }}
-            git-ref=${{ github.ref }}
 
