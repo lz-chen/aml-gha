@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:      
     
+      - name: Debug
+        run: |
+         echo $${{ github.ref }}
+         echo $(git log)
+     
       - name: Check Out Repository
         id: checkout_repository
         uses: actions/checkout@v2
