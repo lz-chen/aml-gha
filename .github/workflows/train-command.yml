@@ -4,16 +4,17 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
-  repository_dispatch:
-    repository:
-      description: "The repository from which the slash command was dispatched"
-      required: true
-    comment-id:
-      description: "The comment-id of the slash command"
-      required: true
-    issue-number:
-      description: "The issue number from which the slash command was created"
-      required: false
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: "The repository from which the slash command was dispatched"
+        required: true
+      comment-id:
+        description: "The comment-id of the slash command"
+        required: true
+      issue-number:
+        description: "The issue number from which the slash command was created"
+        required: false
 
 
 concurrency: deployment-${{ github.ref }}
