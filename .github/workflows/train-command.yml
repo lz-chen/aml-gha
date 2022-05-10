@@ -17,7 +17,7 @@ on:
         required: false
 
 
-concurrency: deployment-${{ github.ref }}
+concurrency: deployment-refs/pull/${{ github.event.inputs.issue-number }}/head
 
 jobs:
   train:
@@ -26,7 +26,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Check Out Repository
       id: checkout_repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+      with:
+        ref: refs/pull/${{ github.event.inputs.issue-number }}/head
+    
+    - name: debug
+      run: |
+        git check-ref
         
     # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
