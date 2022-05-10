@@ -26,4 +26,4 @@ jobs:
             repository=${{ github.repository }}
             issue-number=${{ github.event.issue.number }}
             comment-id=${{ github.event.comment.id }}
-            ref=refs/pull/ ${{ github.event.issue.number }}/head
+            ref=refs/pull/${{ github.event.issue.number }}/head
