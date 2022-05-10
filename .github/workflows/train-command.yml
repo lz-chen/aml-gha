@@ -29,10 +29,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: refs/pull/${{ github.event.inputs.issue-number }}/head
-    
-    - name: debug
-      run: |
-        git check-ref
         
     # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
