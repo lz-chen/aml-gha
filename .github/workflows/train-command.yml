@@ -5,7 +5,15 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
   repository_dispatch:
-    types: [train-command]
+    repository:
+      description: "The repository from which the slash command was dispatched"
+      required: true
+    comment-id:
+      description: "The comment-id of the slash command"
+      required: true
+    issue-number:
+      description: "The issue number from which the slash command was created"
+      required: false
 
 
 concurrency: deployment-${{ github.ref }}
@@ -62,9 +70,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"
-
-    # - uses: actions/upload-artifact@v1
-    #   with:
-    #     name: ${{ steps.aml_run.outputs.model }}
-    #     path: SpatialSimOutputs
-
