@@ -12,8 +12,16 @@ on:
     paths:
       - code/train
 
-  workflow_dispatch:
-    types: [train-command]
+  repository_dispatch:
+    repository:
+      description: "The repository from which the slash command was dispatched"
+      required: true
+    comment-id:
+      description: "The comment-id of the slash command"
+      required: true
+    issue-number:
+      description: "The issue number from which the slash command was created"
+      required: false
 
 concurrency: train-${{ github.ref }}
 
@@ -77,4 +85,3 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"
-

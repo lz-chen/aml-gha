@@ -2,7 +2,36 @@ name: aml-deploy
 
 on:
   workflow_dispatch:
-    types: [deploy-command]
+    inputs:
+      test:
+        description: "Deploy to test environment? true|false"
+        required: false
+        default: "false"
+      dev:
+        description: "Deploy to dev environment? true|false"
+        required: false
+        default: "false"
+      prd:
+        description: "Deploy to prd environment? true|false"
+        required: false
+        default: "false"
+      model-name:
+        description: "Name of the model to deploy to"
+        required: true
+      model-version:
+        description: "Version of the model to deploy to"
+        required: false
+        default: "1"
+      repository:
+        description: "The repository from which the slash command was dispatched"
+        required: true
+      comment-id:
+        description: "The comment-id of the slash command"
+        required: true
+      issue-number:
+        description: "The issue number from which the slash command was created"
+        required: false
+
 
 jobs:
   deploy:
@@ -12,8 +41,8 @@ jobs:
         env:
           PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload.slash_command) }}
         run: |
-          if [ -z "${{ github.event.client_payload.slash_command.model_name }}"]; then echo "model_name is NULL"; exit 1; else echo "model_name is ${{ toJson(github.event.client_payload.slash_command.model_name) }}"; fi;
-          if [ -z "${{ github.event.client_payload.slash_command.model_version }}"]; then echo "model_version is NULL"; exit 1; else echo "model_version is ${{ toJson(github.event.client_payload.slash_command.model_version) }}"; fi;
+          if [ -z "${{ github.event.client_payload.slash_command.model-name }}"]; then echo "model-name is NULL"; exit 1; else echo "model-name is ${{ toJson(github.event.client_payload.slash_command.model-name) }}"; fi;
+          if [ -z "${{ github.event.client_payload.slash_command.model-version }}"]; then echo "model-version is NULL"; exit 1; else echo "model-version is ${{ toJson(github.event.client_payload.slash_command.model-version) }}"; fi;
           
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Check Out Repository
@@ -51,34 +80,34 @@ jobs:
 
       # Test your model (this is optional)
       - name: Test Model
-        if: github.event.client_payload.slash_command.test == 'true'
+        if: github.event.inputs.test == 'true'
         id: aml_test
         uses: Azure/aml-deploy@v1
         with:
             azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-            model_name:  ${{ github.event.client_payload.slash_command.model_name }}
-            model_version: ${{ github.event.client_payload.slash_command.model_version }}
+            model-name:  ${{ github.event.inputs.model-name }}
+            model-version: ${{ github.event.inputs.model-version }}
 
       # Deploy your model to dev (this is optional)
       - name: Dev Deploy
-        if: github.event.client_payload.slash_command.dev == 'true'
+        if: github.event.inputs.dev == 'true'
         id: aml_dev_deploy
         uses: Azure/aml-deploy@v1
         with:
             azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-            model_name:  ${{ github.event.client_payload.slash_command.model_name }}
-            model_version: ${{ github.event.client_payload.slash_command.model_version }}
+            model-name:  ${{ github.event.inputs.model-name }}
+            model-version: ${{ github.event.inputs.model-version }}
             parameters_file: "dev_aks.json"
 
       # Deploy your model to production
       - name: Prod Deploy
-        if: github.event.client_payload.slash_command.prod == 'true'
+        if: github.event.inputs.prd == 'true'
         id: aml_prod_deploy
         uses: Azure/aml-deploy@v1
         with:
             azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-            model_name:  ${{ github.event.client_payload.slash_command.model_name }}
-            model_version: ${{ github.event.client_payload.slash_command.model_version }}
+            model-name:  ${{ github.event.inputs.model-name }}
+            model-version: ${{ github.event.inputs.model-version }}
             parameters_file: "prod_aks.json"
 
       - name: Create comment

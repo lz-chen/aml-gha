@@ -21,4 +21,7 @@ jobs:
           permission: write
           issue-type: pull-request
           dispatch-type: workflow
-
+          static-args: |
+            repository=${{ github.repository }}
+            issue-number=${{ github.event.number }}
+            comment-id=${{ github.event.comment.id }}
