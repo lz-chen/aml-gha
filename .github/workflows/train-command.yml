@@ -1,8 +1,9 @@
 # Actions train a model on Azure Machine Learning
 name: aml-train
 on: 
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - master
 
   workflow_dispatch:
     inputs:
@@ -22,7 +23,16 @@ concurrency: deployment-refs/pull/${{ github.event.inputs.issue-number }}/head
 jobs:
   train:
     runs-on: ubuntu-latest
+    
     steps:
+    - name: Set ref to checkout
+      run: |
+         if [ ${{ github.event_name }} == 'push' ]; then 
+          ref=${{ github.ref }}
+         else
+          ref=refs/pull/${{ github.event.inputs.issue-number }}/head
+         echo "REF=$ref" >> $GITHUB_ENV
+         
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Check Out Repository
       id: checkout_repository
