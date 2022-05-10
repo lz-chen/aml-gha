@@ -7,7 +7,7 @@ def main(workspace):
     print("Loading compute target")
     compute_target = ComputeTarget(
         workspace=workspace,
-        name="githubcluster"
+        name="cpu-cluster"
     )
 
     # Load script parameters
