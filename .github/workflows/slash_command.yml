@@ -11,12 +11,13 @@ jobs:
     steps:
       - name: Slash Command Dispatch
         id: slash_command
-        uses: peter-evans/slash-command-dispatch@v1.1.2
+        uses: peter-evans/slash-command-dispatch@v3
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          reaction-token: ${{ secrets.GITHUB_TOKEN }}
-          commands: deploy
-          reaction-type: hooray
+          reaction-token: ${{ github.token.GITHUB_TOKEN }}
+          commands: |
+            train
+            deploy
           permission: write
           issue-type: pull-request
-          named-args: true
+          dispatch-type: workflow
