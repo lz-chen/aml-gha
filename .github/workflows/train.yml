@@ -12,16 +12,8 @@ on:
     paths:
       - code/train
 
-  repository_dispatch:
-    types: [train-command]
-
   workflow_dispatch:
-    inputs:
-      actor:
-        # todo: update this to a meaningful var
-        description: "The login of the user that initiated the deployment"
-        required: false
-        default: ""
+    types: [train-command]
 
 concurrency: train-${{ github.ref }}
 
