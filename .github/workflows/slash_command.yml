@@ -15,10 +15,7 @@ jobs:
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           reaction-token: ${{ github.token.GITHUB_TOKEN }}
-          commands: |
-            deploy
-            train
-          reaction-type: hooray
+          commands: deploy,train
           permission: write
           issue-type: pull-request
           named-args: true
