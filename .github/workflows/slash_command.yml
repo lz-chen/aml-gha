@@ -9,7 +9,14 @@ jobs:
   slash_command:
     runs-on: ubuntu-latest
     steps:      
-    
+      
+      - name: debug
+        run: | 
+          git show-ref 
+          echo "---"
+          git ls-remote
+        
+      
       - name: Slash Command Dispatch
         id: slash_command
         uses: peter-evans/slash-command-dispatch@v3
@@ -26,4 +33,4 @@ jobs:
             repository=${{ github.repository }}
             issue-number=${{ github.event.issue.number }}
             comment-id=${{ github.event.comment.id }}
-            ref=refs/pull/${{ github.event.issue.number }}/head
+            ref=refs/remotes/pull/${{ github.event.issue.number }}/head
