@@ -1,6 +1,16 @@
 # Actions train a model on Azure Machine Learning
 name: aml-train
-on: [pull_request]
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      actor:
+        description: "The login of the user that initiated the deployment"
+        required: false
+        default: ""
+
+concurrency: deployment-${{ github.ref }}
 
 jobs:
   train:
