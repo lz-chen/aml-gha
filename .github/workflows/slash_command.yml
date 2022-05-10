@@ -8,13 +8,7 @@ jobs:
   # This is the dispatch for slash commands in the repo
   slash_command:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check Out Repository
-        id: checkout_repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      
+    steps:      
       - name: Slash Command Dispatch
         id: slash_command
         uses: peter-evans/slash-command-dispatch@v3
@@ -31,3 +25,4 @@ jobs:
             repository=${{ github.repository }}
             issue-number=${{ github.event.number }}
             comment-id=${{ github.event.comment.id }}
+            ref=${{ github.ref }}
