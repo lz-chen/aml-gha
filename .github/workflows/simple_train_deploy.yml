@@ -2,8 +2,8 @@
 name: simple-aml-train-deploy
 
 on:
-  push
-
+  push: 
+    branches: master
 
 jobs:
   train:
