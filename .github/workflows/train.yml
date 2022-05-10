@@ -1,6 +1,6 @@
 # Actions train a model on Azure Machine Learning
 name: aml-train
-on: 
+on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
@@ -51,7 +51,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token.GITHUB_TOKEN }}
       with:
         msg: "${{ steps.aml_run.outputs.run_metrics }}"
     
@@ -67,7 +67,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token.GITHUB_TOKEN }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"
 
