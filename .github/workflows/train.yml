@@ -3,6 +3,11 @@ name: aml-train
 on: 
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+
+  push:
+    branches:
+      - master
+
   workflow_dispatch:
     inputs:
       actor:
@@ -10,7 +15,7 @@ on:
         required: false
         default: ""
 
-concurrency: deployment-${{ github.ref }}
+concurrency: train-${{ github.ref }}
 
 jobs:
   train:
@@ -20,8 +25,9 @@ jobs:
     - name: Check Out Repository
       id: checkout_repository
       uses: actions/checkout@v2
-        
+
     # Connect or Create the Azure Machine Learning Workspace
+    # todo: different workspace for dev/prd
     - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace
       uses: Azure/aml-workspace@v1
@@ -45,7 +51,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
       with:
         msg: "${{ steps.aml_run.outputs.run_metrics }}"
     
@@ -61,12 +67,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"
-
-    # - uses: actions/upload-artifact@v1
-    #   with:
-    #     name: ${{ steps.aml_run.outputs.model }}
-    #     path: SpatialSimOutputs
 
