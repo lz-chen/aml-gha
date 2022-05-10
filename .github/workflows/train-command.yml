@@ -31,6 +31,7 @@ jobs:
           ref=${{ github.ref }}
          else
           ref=refs/pull/${{ github.event.inputs.issue-number }}/head
+         fi
          echo "REF=$ref" >> $GITHUB_ENV
          
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -38,7 +39,7 @@ jobs:
       id: checkout_repository
       uses: actions/checkout@v3
       with:
-        ref: refs/pull/${{ github.event.inputs.issue-number }}/head
+        ref: ${{ env.REF }}
         
     # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
