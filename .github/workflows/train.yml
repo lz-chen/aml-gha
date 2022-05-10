@@ -12,19 +12,6 @@ on:
 
 concurrency: deployment-${{ github.ref }}
 
-  workflow_dispatch:
-    inputs:
-      pipelineClass:
-        description: "Specify the pipeline class to compile, leave empty if compiling all classes"
-        required: false
-        default: ""
-      actor:
-        description: "The login of the user that initiated the deployment"
-        required: false
-        default: ""
-
-concurrency: deployment-${{ github.ref }}
-
 jobs:
   train:
     runs-on: ubuntu-latest
