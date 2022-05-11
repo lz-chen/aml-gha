@@ -30,7 +30,7 @@ runs:
            ref=refs/pull/${{ inputs.issue_number }}/head
           fi
           echo "REF=$ref" >> $GITHUB_ENV
-
+      shell: bash
     - name: Check Out Repository
         uses: actions/checkout@v3
         with:
@@ -48,3 +48,4 @@ runs:
           jq --arg rg "$rg" '.resource_group = $rg' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
         fi
         echo "Azure workspace setting: $(jq < .cloud/.azure/workspace.json)"
+      shell: bash
