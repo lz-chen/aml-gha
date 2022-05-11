@@ -36,6 +36,7 @@ concurrency: deploy-refs/pull/${{ github.event.inputs.issue-number }}/head
 
 jobs:
   deploy:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.inputs.deploy-to }}
