@@ -69,22 +69,13 @@ jobs:
       with:
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Create comment
+    - name: Create comment for training metrics
       uses: peter-evans/create-or-update-comment@v2
       with:
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         issue-number: ${{ github.event.inputs.issue-number }}
         body: |
           "${{ steps.aml_run.outputs.run_metrics }}"
-          
-    - name: Create comment
-      uses: peter-evans/create-or-update-comment@v2
-      with:
-        token: ${{ secrets.REPO_ACCESS_TOKEN }}
-        issue-number: ${{ github.event.inputs.issue-number }}
-        body: |
-          "${{ steps.aml_registermodel.outputs.model_id }}"
-        
         
     # Register model in Azure Machine Learning model registry
     - name: Register model
@@ -95,9 +86,10 @@ jobs:
           run_id:  ${{ steps.aml_run.outputs.run_id }}
           experiment_name: ${{ steps.aml_run.outputs.experiment_name }}
 
-    - name: Create comment
+    - name: Create comment for model id
       uses: peter-evans/create-or-update-comment@v2
       with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
         issue-number: ${{ github.event.inputs.issue-number }}
         body: |
           "${{ steps.aml_registermodel.outputs.model_id }}"
