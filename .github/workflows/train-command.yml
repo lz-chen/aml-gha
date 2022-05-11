@@ -30,6 +30,7 @@ concurrency: deployment-refs/pull/${{ github.event.inputs.issue-number }}/head
 
 jobs:
   train:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     
     steps:
@@ -79,7 +80,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
       with:
         msg: "${{ steps.aml_run.outputs.run_metrics }}"
     
@@ -95,6 +96,6 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"
