@@ -12,7 +12,7 @@ on:
         required: true
       comment-id:
         description: "The comment-id of the slash command"
-        required: true
+        required: false
       issue-number:
         description: "The issue number from which the slash command was created"
         required: false
