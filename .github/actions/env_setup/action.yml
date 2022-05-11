@@ -31,6 +31,7 @@ runs:
           fi
           echo "REF=$ref" >> $GITHUB_ENV
       shell: bash
+      
     - name: Check Out Repository
       uses: actions/checkout@v3
       with:
@@ -43,6 +44,7 @@ runs:
         if [ $ws != '' ]; then
           echo "Setting workspace to $ws"
           jq --arg ws "$ws" '.name = $ws' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
+        fi
         if [ $rg != '' ]; then
           echo "Setting resource group to $rg"
           jq --arg rg "$rg" '.resource_group = $rg' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
