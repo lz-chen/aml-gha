@@ -34,16 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-#    - name: Set ref to checkout
-#      run: |
-#         if [ ${{ github.event_name }} == 'push' ]; then
-#          ref=${{ github.ref }}
-#         else
-#          ref=refs/pull/${{ github.event.inputs.issue-number }}/head
-#         fi
-#         echo "REF=$ref" >> $GITHUB_ENV
-#
-   # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Check Out Repository
       id: checkout_repository
       uses: actions/checkout@v3
@@ -56,17 +48,7 @@ jobs:
         az_workspace: ${{ github.event.inputs.az-workspace }}
         az_resource_group: ${{ github.event.inputs.az-resource-group }}
     
-    - name: Create comment
-      uses: peter-evans/create-or-update-comment@v2
-      with:
-        issue-number: ${{ github.event.inputs.issue-number }}
-        body: |
-          This is a multi-line test comment
-          - With GitHub **Markdown** :sparkles:
-        reactions: '+1'
-
-    
-      # Connect or Create the Azure Machine Learning Workspace
+    # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace
       uses: Azure/aml-workspace@v1
@@ -90,14 +72,6 @@ jobs:
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v2
       with:
-        issue-number: ${{ github.event.inputs.issue-number }}
-        body: |
-          This is a multi-line test comment
-          - With GitHub **Markdown** 
-    
-    - name: Create comment
-      uses: peter-evans/create-or-update-comment@v2
-      with:
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         issue-number: ${{ github.event.inputs.issue-number }}
         body: |
@@ -106,9 +80,10 @@ jobs:
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v2
       with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
         issue-number: ${{ github.event.inputs.issue-number }}
         body: |
-          "${{ steps.aml_run.outputs.run_metrics }}"
+          "${{ steps.aml_registermodel.outputs.model_id }}"
         
         
     # Register model in Azure Machine Learning model registry
