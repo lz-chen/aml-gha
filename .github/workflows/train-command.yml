@@ -16,6 +16,14 @@ on:
       issue-number:
         description: "The issue number from which the slash command was created"
         required: false
+      az-workspace:
+        description: 'Azure workspace'
+        required: false
+        default: ""
+      az-resource-group:
+        description: "Azure resource group"
+        required: false
+        default: ""
 
 
 concurrency: deployment-refs/pull/${{ github.event.inputs.issue-number }}/head
@@ -25,23 +33,31 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Set ref to checkout
-      run: |
-         if [ ${{ github.event_name }} == 'push' ]; then 
-          ref=${{ github.ref }}
-         else
-          ref=refs/pull/${{ github.event.inputs.issue-number }}/head
-         fi
-         echo "REF=$ref" >> $GITHUB_ENV
-         
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Check Out Repository
-      id: checkout_repository
-      uses: actions/checkout@v3
+#    - name: Set ref to checkout
+#      run: |
+#         if [ ${{ github.event_name }} == 'push' ]; then
+#          ref=${{ github.ref }}
+#         else
+#          ref=refs/pull/${{ github.event.inputs.issue-number }}/head
+#         fi
+#         echo "REF=$ref" >> $GITHUB_ENV
+#
+#    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#    - name: Check Out Repository
+#      id: checkout_repository
+#      uses: actions/checkout@v3
+#      with:
+#        ref: ${{ env.REF }}
+
+    - name: Setup
+      uses: ./.github/actions/env_setup
       with:
-        ref: ${{ env.REF }}
-        
-    # Connect or Create the Azure Machine Learning Workspace
+        event_name: ${{ github.event_name }}
+        issue_number: ${{ github.event.inputs.issue-number }}
+        az_workspace: ${{ github.event.inputs.az-workspace }}
+        az_resource_group: ${{ github.event.inputs.az-resource-group }}
+
+      # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace
       uses: Azure/aml-workspace@v1
@@ -65,7 +81,7 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         msg: "${{ steps.aml_run.outputs.run_metrics }}"
     
@@ -81,6 +97,6 @@ jobs:
     - name: comment PR
       uses: unsplash/comment-on-pr@master
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         msg: "${{ steps.aml_registermodel.outputs.model_id }}"

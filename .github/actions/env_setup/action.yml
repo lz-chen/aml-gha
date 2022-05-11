@@ -1,0 +1,52 @@
+name: "Environment setup"
+description: 'Setting up related environment and environment variable'
+inputs:
+  event_name:
+    description: 'Name of the event that triggered the workflow'
+    required: true
+
+  issue_number:
+    description: "Issue number that triggered the workflow"
+    required: false
+
+  az_workspace:
+    description: 'Azure workspace'
+    required: false
+    default: ""
+
+  az_resource_group:
+    description: "Azure resource group"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Set ref to checkout
+      run: |
+          if [ ${{ inputs.event_name }} == 'push' ]; then 
+           ref=${{ github.ref }}
+          else
+           ref=refs/pull/${{ inputs.issue_number }}/head
+          fi
+          echo "REF=$ref" >> $GITHUB_ENV
+
+    - name: Check Out Repository
+        id: checkout_repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.REF }}
+
+    - name: Write workspace.json
+      run: |
+        ws=${{ inputs.az_workspace }}
+        rg=${{ inputs.az_resource_group }}
+        if [ $ws != '' ]; then
+          echo "Setting workspace to $ws"
+          jq --arg ws "$ws" '.name = $ws' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
+        if [ $rg != '' ]; then
+          echo "Setting resource group to $rg"
+          jq --arg rg "$rg" '.resource_group = $rg' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
+        fi
+        echo "Azure workspace setting: $(jq < .cloud/.azure/workspace.json)"

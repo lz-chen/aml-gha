@@ -1,13 +1,12 @@
-import os
 import joblib
 import numpy as np
-
-from sklearn.svm import SVC
 from azureml.core import Model
 from azureml.monitoring import ModelDataCollector
-from inference_schema.schema_decorators import input_schema, output_schema
 from inference_schema.parameter_types.numpy_parameter_type import NumpyParameterType
-from inference_schema.parameter_types.standard_py_parameter_type import StandardPythonParameterType
+from inference_schema.parameter_types.standard_py_parameter_type import (
+    StandardPythonParameterType,
+)
+from inference_schema.schema_decorators import input_schema, output_schema
 
 
 # The init() method is called once, when the web service starts up.
@@ -20,8 +19,14 @@ def init():
     # a directory containing the model file you registered.
     model_path = Model.get_model_path(model_name="mymodel")
     model = joblib.load(model_path)
-    inputs_dc = ModelDataCollector("sample-model", designation="inputs", feature_names=["feat1", "feat2", "feat3", "feat4"])
-    prediction_dc = ModelDataCollector("sample-model", designation="predictions", feature_names=["prediction"])
+    inputs_dc = ModelDataCollector(
+        "sample-model",
+        designation="inputs",
+        feature_names=["feat1", "feat2", "feat3", "feat4"],
+    )
+    prediction_dc = ModelDataCollector(
+        "sample-model", designation="predictions", feature_names=["prediction"]
+    )
 
 
 # The run() method is called each time a request is made to the scoring API.
@@ -30,13 +35,13 @@ def init():
 # run() method parses and validates the incoming payload against
 # the example input you provide here. This will also generate a Swagger
 # API document for your web service.
-@input_schema('data', NumpyParameterType(np.array([[0.1, 1.2, 2.3, 3.4]])))
-@output_schema(StandardPythonParameterType({'predict': [['Iris-virginica']]}))
+@input_schema("data", NumpyParameterType(np.array([[0.1, 1.2, 2.3, 3.4]])))
+@output_schema(StandardPythonParameterType({"predict": [["Iris-virginica"]]}))
 def run(data):
     # Use the model object loaded by init().
     result = model.predict(data)
-    inputs_dc.collect(data) #this call is saving our input data into Azure Blob
-    prediction_dc.collect(result) #this call is saving our input data into Azure Blob
+    inputs_dc.collect(data)  # this call is saving our input data into Azure Blob
+    prediction_dc.collect(result)  # this call is saving our input data into Azure Blob
 
     # You can return any JSON-serializable object.
-    return { "predict": result.tolist() }
+    return {"predict": result.tolist()}
