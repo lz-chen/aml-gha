@@ -42,13 +42,11 @@ jobs:
 #         fi
 #         echo "REF=$ref" >> $GITHUB_ENV
 #
-#    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#    - name: Check Out Repository
-#      id: checkout_repository
-#      uses: actions/checkout@v3
-#      with:
-#        ref: ${{ env.REF }}
-
+   # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Check Out Repository
+      id: checkout_repository
+      uses: actions/checkout@v3
+      
     - name: Setup
       uses: ./.github/actions/env_setup
       with:
