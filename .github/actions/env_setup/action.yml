@@ -32,9 +32,9 @@ runs:
           echo "REF=$ref" >> $GITHUB_ENV
       shell: bash
     - name: Check Out Repository
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ env.REF }}
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ env.REF }}
 
     - name: Write workspace.json
       run: |
