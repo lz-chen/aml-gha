@@ -56,13 +56,6 @@ jobs:
         az_workspace: ${{ github.event.inputs.az-workspace }}
         az_resource_group: ${{ github.event.inputs.az-resource-group }}
     
-    - name: debug comment
-      uses: unsplash/comment-on-pr@v1.2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-      with:
-        msg: "This works"
-    
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v2
       with:
@@ -94,13 +87,30 @@ jobs:
       with:
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: comment PR
-      uses: unsplash/comment-on-pr@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v2
       with:
-        msg: "${{ steps.aml_run.outputs.run_metrics }}"
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          This is a multi-line test comment
+          - With GitHub **Markdown** 
     
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          "${{ steps.aml_run.outputs.run_metrics }}"
+          
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          "${{ steps.aml_run.outputs.run_metrics }}"
+        
+        
     # Register model in Azure Machine Learning model registry
     - name: Register model
       id: aml_registermodel
@@ -110,9 +120,9 @@ jobs:
           run_id:  ${{ steps.aml_run.outputs.run_id }}
           experiment_name: ${{ steps.aml_run.outputs.experiment_name }}
 
-    - name: comment PR
-      uses: unsplash/comment-on-pr@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v2
       with:
-        msg: "${{ steps.aml_registermodel.outputs.model_id }}"
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          "${{ steps.aml_registermodel.outputs.model_id }}"
