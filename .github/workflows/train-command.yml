@@ -55,7 +55,24 @@ jobs:
         issue_number: ${{ github.event.inputs.issue-number }}
         az_workspace: ${{ github.event.inputs.az-workspace }}
         az_resource_group: ${{ github.event.inputs.az-resource-group }}
+    
+    - name: debug comment
+      uses: unsplash/comment-on-pr@v1.2.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+      with:
+        msg: "This works"
+    
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          This is a multi-line test comment
+          - With GitHub **Markdown** :sparkles:
+        reactions: '+1'
 
+    
       # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace
