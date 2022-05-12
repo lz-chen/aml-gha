@@ -75,6 +75,10 @@ jobs:
         with:
             azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Debug jinja
+        run: |
+          python -c "import jinja2; print(jinja2.__version__)"
+
       # Deploy your model
       - name: Deploy to ${{ github.event.inputs.deploy-to }} environment
         id: aml_deploy
