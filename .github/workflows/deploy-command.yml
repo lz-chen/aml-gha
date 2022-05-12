@@ -78,7 +78,9 @@ jobs:
           az extension add -n azure-cli-ml
       - name: Deploy model
         run: |
-          cat .cloud/.azure/Development_aks.json
+          echo "current dir: $(pwd)"
+          ls
+          echo "start deploy..."
           # --dc .cloud/.azure/Development_aks.json
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
            --ct aks-cluster-new \
