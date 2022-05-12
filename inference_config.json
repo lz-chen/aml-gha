@@ -1,0 +1,45 @@
+{
+    "entryScript": "score.py",
+    "sourceDirectory": "./code/deploy",
+    "environment": {
+        "docker": {
+            "arguments": [],
+            "baseDockerfile": null,
+            "baseImage": "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            "enabled": false,
+            "sharedVolumes": true,
+            "shmSize": null
+        },
+        "environmentVariables": {
+            "EXAMPLE_ENV_VAR": "EXAMPLE_VALUE"
+        },
+        "name": "my-deploy-env",
+        "python": {
+            "baseCondaEnvironment": null,
+            "condaDependencies": {
+            "channels": [
+              "conda-forge"
+            ],
+            "dependencies": [
+              "python=3.8.2",
+              {
+                "pip": [
+                  "azureml-defaults",
+                  "azure-core",
+                  "azureml-monitoring",
+                  "inference-schema",
+                  "inference-schema[numpy-support]"
+                ]
+              },
+              "numpy",
+              "scikit-learn=0.22.2",
+            ],
+            "name": "project_environment"
+          },
+            "condaDependenciesFile": null,
+            "interpreterPath": "python",
+            "userManagedDependencies": false
+        },
+        "version": "1"
+    }
+}
