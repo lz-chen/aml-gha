@@ -13,7 +13,7 @@
         "environmentVariables": {
             "EXAMPLE_ENV_VAR": "EXAMPLE_VALUE"
         },
-        "name": "iris-env",
+        "name": "iris-env-new",
         "python": {
             "baseCondaEnvironment": null,
             "condaDependencies": {
@@ -25,7 +25,7 @@
               {
                 "pip": [
                   "azureml-defaults==1.40.0",
-                  "azure-core==1.40.0",
+                  "azure-core==1.24.0",
                   "azureml-monitoring",
                   "inference-schema",
                   "inference-schema[numpy-support]",
@@ -35,7 +35,7 @@
               "numpy",
               "scikit-learn=0.22.2",
             ],
-            "name": "iris-project-env"
+            "name": "iris-env-new"
           },
             "condaDependenciesFile": null,
             "interpreterPath": "python",
