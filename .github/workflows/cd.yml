@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Invoke training workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
@@ -32,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Invoke training workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
