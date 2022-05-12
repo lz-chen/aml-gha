@@ -81,7 +81,7 @@ jobs:
           # --dc .cloud/.azure/Development_aks.json
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
            --compute-target aks-cluster-new --compute-type AKS \
-           --entry-script score.py --conda-file environment.yml\
+           --entry-script score.py --inference-config-file environment.yml\
            --source-directory code/deploy/ --workspace-name ${workspace} --resource-group ${group}
           ls -la .cloud/.azure
         env:
