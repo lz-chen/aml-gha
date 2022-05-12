@@ -22,7 +22,7 @@ jobs:
           workflow: aml-train
           token: ${{ secrets.PERSONAL_TOKEN }}
           inputs: |
-            '{ "deploy-to": "${DEPLOY_ENV}"}'
+            { "deploy-to": "${DEPLOY_ENV}"}
         env:
           DEPLOY_ENV: "Staging"
 
@@ -40,6 +40,6 @@ jobs:
           workflow: aml-train
           token: ${{ secrets.PERSONAL_TOKEN }}
           inputs: |
-            '{ "deploy-to": "${DEPLOY_ENV}"}'
+            { "deploy-to": "${DEPLOY_ENV}"}
         env:
           DEPLOY_ENV: "Production"
