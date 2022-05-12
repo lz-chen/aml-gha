@@ -24,11 +24,12 @@
               "python=3.8.2",
               {
                 "pip": [
-                  "azureml-defaults",
-                  "azure-core",
+                  "azureml-defaults==1.40.0",
+                  "azure-core==1.40.0",
                   "azureml-monitoring",
                   "inference-schema",
-                  "inference-schema[numpy-support]"
+                  "inference-schema[numpy-support]",
+                  "Jinja2<3.1"
                 ]
               },
               "numpy",
