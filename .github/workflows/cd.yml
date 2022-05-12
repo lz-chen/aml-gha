@@ -16,12 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Invoke training workflow
-      uses: benc-uk/workflow-dispatch@v1
-      with:
-        workflow: aml-train
-        token: ${{ secrets.PERSONAL_TOKEN }}
-        inputs: |
-          '{ "deploy-to": "${DEPLOY_ENV}"}'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: aml-train
+          token: ${{ secrets.PERSONAL_TOKEN }}
+          inputs: |
+            '{ "deploy-to": "${DEPLOY_ENV}"}'
         env:
           DEPLOY_ENV: "Staging"
 
@@ -33,11 +33,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Invoke training workflow
-      uses: benc-uk/workflow-dispatch@v1
-      with:
-        workflow: aml-train
-        token: ${{ secrets.PERSONAL_TOKEN }}
-        inputs: |
-          '{ "deploy-to": "${DEPLOY_ENV}"}'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: aml-train
+          token: ${{ secrets.PERSONAL_TOKEN }}
+          inputs: |
+            '{ "deploy-to": "${DEPLOY_ENV}"}'
         env:
           DEPLOY_ENV: "Production"

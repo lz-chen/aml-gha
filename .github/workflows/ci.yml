@@ -29,7 +29,7 @@ jobs:
         run: $CONDA/bin/conda env update --file code/train/environment.yaml
 
       - name: Style check
-      - uses: pre-commit/action@v2.0.3
+        uses: pre-commit/action@v2.0.3
 
   unittests:
     timeout-minutes: 5
