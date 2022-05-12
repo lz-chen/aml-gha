@@ -25,10 +25,13 @@ jobs:
         with:
           python-version: '3.8'
 
+      - name: debug cache
+        run: ls -la ~/cache
+
       - uses: actions/cache@v2
         with:
           path: ~/cache
-          key: conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}
+          key: "conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}"
         id: cache
         env:
           CACHE_NUMBER: 1
