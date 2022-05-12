@@ -87,25 +87,11 @@ jobs:
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
            --inference-config-file inference_config.json \
            --deploy-config-file aks_deploy.json \
-           --overwrite --compute-target aks-cluster-new
+           --overwrite --compute-target aks-cluster-new \
+           --workspace-name ${workspace} --resource-group ${group}
         env:
           model_name:  ${{ github.event.inputs.model-name }}
           model_version: ${{ github.event.inputs.model-version }}
-
-      - name: Deploy model
-        run: |
-          # --dc .cloud/.azure/Development_aks.json
-          az ml model deploy --name irisservice --model ${model_name}:${model_version} \
-           --compute-target aks-cluster-new --compute-type aks \
-           --entry-script score.py --conda-file environment.yml\
-           --source-directory code/deploy/ --workspace-name ${workspace} --resource-group ${group}
-           --overwrite
-          ls -la .cloud/.azure
-        env:
-          model_name:  ${{ github.event.inputs.model-name }}
-          model_version: ${{ github.event.inputs.model-version }}
-          workspace: ${{ github.event.inputs.az-workspace }}
-          group: ${{ github.event.inputs.az-resource-group }}
 
       - name: Create comment
         if: ${{ github.event.inputs.issue-numer }} != ''
