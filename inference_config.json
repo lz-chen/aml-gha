@@ -13,7 +13,7 @@
         "environmentVariables": {
             "EXAMPLE_ENV_VAR": "EXAMPLE_VALUE"
         },
-        "name": "my-deploy-env",
+        "name": "iris-env",
         "python": {
             "baseCondaEnvironment": null,
             "condaDependencies": {
@@ -35,7 +35,7 @@
               "numpy",
               "scikit-learn=0.22.2",
             ],
-            "name": "project_environment"
+            "name": "iris-project-env"
           },
             "condaDependenciesFile": null,
             "interpreterPath": "python",
