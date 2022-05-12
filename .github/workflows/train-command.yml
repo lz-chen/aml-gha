@@ -31,8 +31,8 @@ jobs:
   train:
     timeout-minutes: 20
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.event.inputs.environment }}
+#    environment:
+#      name: ${{ github.event.inputs.environment }}
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Check Out Repository
