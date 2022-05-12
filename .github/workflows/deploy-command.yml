@@ -75,16 +75,6 @@ jobs:
         with:
             azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-#      # Deploy your model
-#      - name: Deploy to ${{ github.event.inputs.deploy-to }} environment
-#        id: aml_deploy
-#        uses: Azure/aml-deploy@v1
-#        with:
-#            azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-#            model_name:  ${{ github.event.inputs.model-name }}
-#            model_version: ${{ github.event.inputs.model-version }}
-#            parameters_file: "${{ github.event.inputs.deploy-to }}_aks.json"
-
       - name: azure login
         uses: azure/login@v1
         with:
@@ -92,7 +82,7 @@ jobs:
 
       - name: Deploy model
         run: |
-          echo "${{ model_version }}"
+          echo "${model_version}"
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
            --dc ./.cloud/.azure/Development_aks.json --ct aks-cluster-new \
            --path ./code/deploy/
