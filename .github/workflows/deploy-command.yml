@@ -84,14 +84,16 @@ jobs:
 
       - name: Deploy model
         run: |
-          az ml model deploy --name irisservice --model ${model_name}:${model_version} \
+          az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
            --inference-config-file inference_config.json \
            --deploy-config-file aks_deploy.json \
            --overwrite --compute-target aks-cluster-new \
-           --workspace-name ${workspace} --resource-group ${group}
+           --workspace-name ${WORKSPACE} --resource-group ${GROUP}
         env:
-          model_name:  ${{ github.event.inputs.model-name }}
-          model_version: ${{ github.event.inputs.model-version }}
+          MODEL_NAME:  ${{ github.event.inputs.model-name }}
+          MODEL_VERSION: ${{ github.event.inputs.model-version }}
+          WORKSPACE: ${{ github.event.inputs.az-workspace }}
+          GROUP: ${{ github.event.inputs.az-resource-group }}
 
       - name: Create comment
         if: ${{ github.event.inputs.issue-numer }} != ''
