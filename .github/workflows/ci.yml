@@ -25,8 +25,17 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Conda environment
+      - uses: actions/cache@v2
+        with:
+          path: ~/cache
+          key: conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}
+        id: cache
+        env:
+          CACHE_NUMBER: 1
+
+      - name: Update environment
         run: $CONDA/bin/conda env update --file code/train/environment.yaml
+        if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Style check
         uses: pre-commit/action@v2.0.3
@@ -49,8 +58,17 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Conda environment
+      - uses: actions/cache@v2
+        with:
+          path: ~/cache
+          key: conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}
+        id: cache
+        env:
+          CACHE_NUMBER: 1
+
+      - name: Update environment
         run: $CONDA/bin/conda env update --file code/train/environment.yaml
+        if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run unittests
         run: |
