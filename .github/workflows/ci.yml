@@ -20,11 +20,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-#      - name: Setup python
-#        uses: actions/setup-python@v3
-#        with:
-#          python-version: '3.8'
-
       - name: Cache conda
         uses: actions/cache@v2
         env:
@@ -35,24 +30,12 @@ jobs:
             ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
             hashFiles('code/train/environment.yaml') }}
 
-        - uses: conda-incubator/setup-miniconda@v2
-          with:
-            activate-environment: conda-env
-            channel-priority: strict
-            environment-file: code/train/environment.yaml
-            use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-
-#      - uses: actions/cache@v2
-#        with:
-#          path: ~/cache
-#          key: "conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}"
-#        id: cache
-#        env:
-#          CACHE_NUMBER: 1
-#
-#      - name: Update environment
-#        run: $CONDA/bin/conda env update --file code/train/environment.yaml
-#        if: steps.cache.outputs.cache-hit != 'true'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: conda-env
+          channel-priority: strict
+          environment-file: code/train/environment.yaml
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
       - name: Style check
         uses: pre-commit/action@v2.0.3
@@ -70,23 +53,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-#      - name: Setup python
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: '3.8'
-#
-#      - uses: actions/cache@v2
-#        with:
-#          path: ~/cache
-#          key: conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}
-#        id: cache
-#        env:
-#          CACHE_NUMBER: 1
-#
-#      - name: Update environment
-#        run: $CONDA/bin/conda env update --file code/train/environment.yaml
-#        if: steps.cache.outputs.cache-hit != 'true'
-      
       - name: Cache conda
         uses: actions/cache@v2
         env:
@@ -97,12 +63,12 @@ jobs:
             ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
             hashFiles('code/train/environment.yaml') }}
 
-        - uses: conda-incubator/setup-miniconda@v2
-          with:
-            activate-environment: conda-env
-            channel-priority: strict
-            environment-file: code/train/environment.yaml
-            use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: conda-env
+          channel-priority: strict
+          environment-file: code/train/environment.yaml
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
       - name: Run unittests
         run: |
