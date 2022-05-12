@@ -78,9 +78,12 @@ jobs:
           az extension add -n azure-cli-ml
       - name: Deploy model
         run: |
+          cat .cloud/.azure/Development_aks.json
+          # --dc .cloud/.azure/Development_aks.json
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
-           --dc ./.cloud/.azure/Development_aks.json --ct aks-cluster-new \
-           --path ./code/deploy/ --workspace-name ${workspace} --resource-group ${group}
+           --ct aks-cluster-new \
+           --entry-script score.py --conda-file environment.yml\
+           --path code/deploy/ --workspace-name ${workspace} --resource-group ${group}
         env:
           model_name:  ${{ github.event.inputs.model-name }}
           model_version: ${{ github.event.inputs.model-version }}
