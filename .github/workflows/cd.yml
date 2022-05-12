@@ -20,7 +20,7 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: aml-train
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
           inputs: |
             { "deploy-to": "${DEPLOY_ENV}"}
         env:
@@ -38,7 +38,7 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: aml-train
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
           inputs: |
             { "deploy-to": "${DEPLOY_ENV}"}
         env:
