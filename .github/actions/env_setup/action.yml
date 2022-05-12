@@ -21,7 +21,6 @@ inputs:
 
 runs:
   using: "composite"
-
   steps:
     - name: Set ref to checkout
       run: |
@@ -31,12 +30,12 @@ runs:
            ref=refs/pull/${{ inputs.issue_number }}/head
           fi
           echo "REF=$ref" >> $GITHUB_ENV
-
+      shell: bash
+      
     - name: Check Out Repository
-        id: checkout_repository
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ env.REF }}
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ env.REF }}
 
     - name: Write workspace.json
       run: |
@@ -45,8 +44,10 @@ runs:
         if [ $ws != '' ]; then
           echo "Setting workspace to $ws"
           jq --arg ws "$ws" '.name = $ws' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
+        fi
         if [ $rg != '' ]; then
           echo "Setting resource group to $rg"
           jq --arg rg "$rg" '.resource_group = $rg' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
         fi
         echo "Azure workspace setting: $(jq < .cloud/.azure/workspace.json)"
+      shell: bash

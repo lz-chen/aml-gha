@@ -3,18 +3,10 @@ name: aml-deploy
 on:
   workflow_dispatch:
     inputs:
-      test:
-        description: "Deploy to test environment? true|false"
+      deploy-to:
+        description: "Environment to deploy to. Development|Staging|Production"
         required: false
-        default: "false"
-      dev:
-        description: "Deploy to dev environment? true|false"
-        required: false
-        default: "false"
-      prd:
-        description: "Deploy to prd environment? true|false"
-        required: false
-        default: "false"
+        default: "Development"
       model-name:
         description: "Name of the model to deploy to"
         required: true
@@ -22,99 +14,95 @@ on:
         description: "Version of the model to deploy to"
         required: false
         default: "1"
+      az-workspace:
+        description: 'Azure workspace'
+        required: false
+        default: "lc-onboarding"
+      az-resource-group:
+        description: "Azure resource group"
+        required: false
+        default: "lc-test"
       repository:
         description: "The repository from which the slash command was dispatched"
-        required: true
+        required: false
       comment-id:
         description: "The comment-id of the slash command"
-        required: true
+        required: false
       issue-number:
         description: "The issue number from which the slash command was created"
         required: false
-      # todo: in the workflow, if git-ref not provided from input, use ${{ github.ref }}
-      git-ref:
-        description: "The ref of git branch that triggered the event"
-        required: false
 
-concurrency: deploy-${{ github.ref }}
+concurrency: deploy-refs/pull/${{ github.event.inputs.issue-number }}/head
 
 jobs:
   deploy:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.deploy-to }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Check Out Repository
         id: checkout_repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/env_setup
         with:
-          ref: refs/pull/${{ github.event.inputs.issue-number }}/head
+          event_name: ${{ github.event_name }}
+          issue_number: ${{ github.event.inputs.issue-number }}
+          az_workspace: ${{ github.event.inputs.az-workspace }}
+          az_resource_group: ${{ github.event.inputs.az-resource-group }}
 
       - name: Create URL to the run output
         id: vars
         run: echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
 
-#      - name: Create comment
-#        uses: peter-evans/create-or-update-comment@v1
-#        with:
-#          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-#          body: |
-#            @${{ github.event.client_payload.github.actor }} Just submit a deploy request.
-#            [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }})
+      - name: Create comment
+        if: ${{ github.event.inputs.issue-numer }} != ''
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          issue-number:  ${{ github.event.inputs.issue-number }}
+          body: |
+            Deployment submitted.
+            [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
+
+      - name: azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: CLI and workspace setup
+        run: |
+          az extension add -n azure-cli-ml
+          az configure --defaults group=${GROUP} workspace=$WORKSPACE location=$LOCATION
+        env:
+          WORKSPACE: ${{ github.event.inputs.az-workspace }}
+          GROUP: ${{ github.event.inputs.az-resource-group }}
+          LOCATION: northeurope
+
+      - name: Deploy model
+        run: |
+          ls -la
+          cat inference_config.json
+          az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
+           --inference-config-file inference_config.json \
+           --deploy-config-file aks_deploy.json \
+           --overwrite --compute-target aks-cluster-new \
+           --workspace-name ${WORKSPACE} --resource-group ${GROUP}
+        env:
+          MODEL_NAME:  ${{ github.event.inputs.model-name }}
+          MODEL_VERSION: ${{ github.event.inputs.model-version }}
+          WORKSPACE: ${{ github.event.inputs.az-workspace }}
+          GROUP: ${{ github.event.inputs.az-resource-group }}
 
       - name: Create comment
-        uses: unsplash/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+        if: ${{ github.event.inputs.issue-numer }} != ''
+        uses: peter-evans/create-or-update-comment@v2
         with:
-          msg: |
-            @${{ github.event.client_payload.github.actor }} Just submit a deploy request.
-            [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }})
-
-      # Connect or Create the Azure Machine Learning Workspace
-      - name: Connect/Create Azure Machine Learning Workspace
-        id: aml_workspace
-        uses: Azure/aml-workspace@v1
-        with:
-            azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # Test your model (this is optional)
-      - name: Test Model
-        if: github.event.inputs.test == 'true'
-        id: aml_test
-        uses: Azure/aml-deploy@v1
-        with:
-            azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-            model-name:  ${{ github.event.inputs.model-name }}
-            model-version: ${{ github.event.inputs.model-version }}
-
-      # Deploy your model to dev (this is optional)
-      - name: Dev Deploy
-        if: github.event.inputs.dev == 'true'
-        id: aml_dev_deploy
-        uses: Azure/aml-deploy@v1
-        with:
-            azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-            model-name:  ${{ github.event.inputs.model-name }}
-            model-version: ${{ github.event.inputs.model-version }}
-            parameters_file: "dev_aks.json"
-
-      # Deploy your model to production
-      - name: Prod Deploy
-        if: github.event.inputs.prd == 'true'
-        id: aml_prod_deploy
-        uses: Azure/aml-deploy@v1
-        with:
-            azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-            model-name:  ${{ github.event.inputs.model-name }}
-            model-version: ${{ github.event.inputs.model-version }}
-            parameters_file: "prod_aks.json"
-
-      - name: Create comment
-        uses: unsplash/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-        with:
-          msg: |
-            scoring-endpoint: ${{ steps.aml_prod_deploy.outputs.service_scoring_uri}}
-            swagger-uri: ${{ steps.aml_prod_deploy.outputs.service_swagger_uri}}
+          issue-number: ${{ github.event.inputs.issue-number }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          body: |
+            scoring-endpoint: ${{ steps.aml_deploy.outputs.service_scoring_uri}}
+            swagger-uri: ${{ steps.aml_deploy.outputs.service_swagger_uri}}
