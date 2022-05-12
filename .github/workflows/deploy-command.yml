@@ -66,14 +66,7 @@ jobs:
           issue-number:  ${{ github.event.inputs.issue-number }}
           body: |
             Deployment submitted.
-            [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }})
-
-      # Connect or Create the Azure Machine Learning Workspace
-      - name: Connect/Create Azure Machine Learning Workspace
-        id: aml_workspace
-        uses: Azure/aml-workspace@v1
-        with:
-            azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+            [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
 
       - name: azure login
         uses: azure/login@v1
@@ -83,8 +76,8 @@ jobs:
       - name: CLI and workspace setup
         run: |
           az extension add -n azure-cli-ml
-          az ml folder attach -w {{ github.event.inputs.az-workspace }} \ 
-           -g {{ github.event.inputs.az-resource-group }}
+          az ml folder attach -w ${{ github.event.inputs.az-workspace }} \ 
+           -g ${{ github.event.inputs.az-resource-group }}
 
       - name: Deploy model
         run: |
