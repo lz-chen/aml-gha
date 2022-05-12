@@ -76,18 +76,21 @@ jobs:
       - name: CLI and workspace setup
         run: |
           az extension add -n azure-cli-ml
+          az configure --defaults group=${GROUP} workspace=$WORKSPACE location=$LOCATION
+        env:
+          WORKSPACE: ${{ github.event.inputs.az-workspace }}
+          GROUP: ${{ github.event.inputs.az-resource-group }}
+          LOCATION: northeurope
 
       - name: Deploy model
         run: |
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
            --inference-config-file inference_config.json \
            --deploy-config-file aks_deploy.json \
-           --workspace-name ${workspace} --resource-group ${group}
+           --overwrite --compute-target aks-cluster-new
         env:
           model_name:  ${{ github.event.inputs.model-name }}
           model_version: ${{ github.event.inputs.model-version }}
-          workspace: ${{ github.event.inputs.az-workspace }}
-          group: ${{ github.event.inputs.az-resource-group }}
 
       - name: Deploy model
         run: |
