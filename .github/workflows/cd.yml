@@ -2,9 +2,9 @@ name: continuous-deployment
 on:
   push:
     branches:
-      - master
+      - main
     paths:
-      - 'code/**'
+      - code/**
 
 concurrency: deployment-${{ github.ref }}
 
