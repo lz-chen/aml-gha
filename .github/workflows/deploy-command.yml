@@ -76,7 +76,7 @@ jobs:
       - name: CLI and workspace setup
         run: |
           az extension add -n azure-cli-ml
-          az configure --defaults group=${GROUP} workspace=$WORKSPACE location=$LOCATION
+          # az configure --defaults group=${GROUP} workspace=$WORKSPACE location=$LOCATION
         env:
           WORKSPACE: ${{ github.event.inputs.az-workspace }}
           GROUP: ${{ github.event.inputs.az-resource-group }}
@@ -84,18 +84,20 @@ jobs:
 
       - name: Deploy model
         run: |
-          ls -la
-          cat inference_config.json
-          az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
+          response=$(az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
            --inference-config-file inference_config.json \
            --deploy-config-file aks_deploy.json \
            --overwrite --compute-target aks-cluster-new \
-           --workspace-name ${WORKSPACE} --resource-group ${GROUP}
+           --workspace-name ${WORKSPACE} --resource-group ${GROUP})
+          scoring_uri= $(echo "$response" | jq .scoringUri) 
+          echo "SCORING_URI=$scoring_uri" >> $GITHUB_ENV
+
         env:
           MODEL_NAME:  ${{ github.event.inputs.model-name }}
           MODEL_VERSION: ${{ github.event.inputs.model-version }}
           WORKSPACE: ${{ github.event.inputs.az-workspace }}
           GROUP: ${{ github.event.inputs.az-resource-group }}
+
 
       - name: Create comment
         if: ${{ github.event.inputs.issue-numer }} != ''
@@ -104,5 +106,4 @@ jobs:
           issue-number: ${{ github.event.inputs.issue-number }}
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           body: |
-            scoring-endpoint: ${{ steps.aml_deploy.outputs.service_scoring_uri}}
-            swagger-uri: ${{ steps.aml_deploy.outputs.service_swagger_uri}}
+            scoring-endpoint: ${{ env.SCORING_URI }}

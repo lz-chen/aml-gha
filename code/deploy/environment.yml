@@ -8,10 +8,11 @@ dependencies:
   - numpy=1.18.1
   - pip:
     - azureml-defaults==1.40.0
-    - azure-core==1.40.0
-    - azureml-monitoring==0.1.0a18
-    - inference-schema==1.0.2
-    - inference-schema[numpy-support]==1.0.2
+    - azure-core==1.24.0
+    - azureml-monitoring
+    - inference-schema
+    - inference-schema[numpy-support]
+    - Jinja2<3.1
 channels:
   - conda-forge
 

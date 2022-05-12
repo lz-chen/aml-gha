@@ -1,0 +1,75 @@
+name: continuous-integration
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+  push:
+    branches:
+      - master
+
+jobs:
+  code_style:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/cache
+          key: conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}
+        id: cache
+        env:
+          CACHE_NUMBER: 1
+
+      - name: Update environment
+        run: $CONDA/bin/conda env update --file code/train/environment.yaml
+        if: steps.cache.outputs.cache-hit != 'true'
+
+      - name: Style check
+        uses: pre-commit/action@v2.0.3
+
+  unittests:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: code_style
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/cache
+          key: conda-${{ hashFiles('code/train/environment.yaml') }}-${CACHE_NUMBER}
+        id: cache
+        env:
+          CACHE_NUMBER: 1
+
+      - name: Update environment
+        run: $CONDA/bin/conda env update --file code/train/environment.yaml
+        if: steps.cache.outputs.cache-hit != 'true'
+
+      - name: Run unittests
+        run: |
+          python -m unittest discover 
