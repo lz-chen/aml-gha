@@ -81,7 +81,13 @@ jobs:
         run: |
           az ml model deploy --name irisservice --model ${model_name}:${model_version} \
            --inference-config-file inference_config.json \
-           --deploy-config-file aks_deploy.json
+           --deploy-config-file aks_deploy.json \
+           --workspace-name ${workspace} --resource-group ${group}
+        env:
+          model_name:  ${{ github.event.inputs.model-name }}
+          model_version: ${{ github.event.inputs.model-version }}
+          workspace: ${{ github.event.inputs.az-workspace }}
+          group: ${{ github.event.inputs.az-resource-group }}
 
       - name: Deploy model
         run: |
