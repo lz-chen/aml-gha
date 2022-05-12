@@ -84,6 +84,8 @@ jobs:
 
       - name: Deploy model
         run: |
+          ls -la
+          cat inference_config.json
           az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
            --inference-config-file inference_config.json \
            --deploy-config-file aks_deploy.json \
