@@ -72,7 +72,7 @@ jobs:
       run: |
           az configure --defaults workspace=$WS group=$RG
       env:
-        WS: ${{ github.event.inputs.az-workspace }} || 'lc-onboarding' }}
+        WS: ${{ github.event.inputs.az-workspace || 'lc-onboarding' }}
         RG: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
 
     - name: Submit training run
