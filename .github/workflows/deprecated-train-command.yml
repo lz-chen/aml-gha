@@ -1,13 +1,6 @@
 # Actions train a model on Azure Machine Learning
-name: aml-train-cli
+name: aml-train
 on:
-  push:
-    branches:
-      - main
-  # todo: uncomment
-#    paths:
-#      - code/**
-
   workflow_dispatch:
     inputs:
       repository:
@@ -27,24 +20,6 @@ on:
         description: "Azure resource group"
         required: false
         default: ""
-      kernel:
-        description: "Kernel type for SVM model"
-        required: false
-        type: choice
-        default: "linear"
-        options:
-          - "linear"
-          - "rbf"
-          - "sigmoid"
-          - "poly"
-      penalty:
-        description: "Penalty for SVM model"
-        required: false
-        default: "0.1"
-      model-name:
-        description: "Name of the trained model"
-        required: false
-        default: "iris_model"
 
 concurrency: train-refs/pull/${{ github.event.inputs.issue-number }}/head
 
@@ -64,32 +39,27 @@ jobs:
         issue_number: ${{ github.event.inputs.issue-number }}
         az_workspace: ${{ github.event.inputs.az-workspace }}
         az_resource_group: ${{ github.event.inputs.az-resource-group }}
-
-    - name: Azure login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Configure workspace and resource group
+    
+    # Connect or Create the Azure Machine Learning Workspace
+    - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace
-      run: |
-       az extension add -n azure-cli-ml
-       az configure --defaults workspace=$WS group=$RG
-      env:
-        WS: ${{ github.event.inputs.az-workspace }}
-        RG: ${{ github.event.inputs.az-resource-group }}
+      uses: Azure/aml-workspace@v1
+      with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    # Connect or Create a Compute Target in Azure Machine Learning
+    - name: Connect/Create Azure Machine Learning Compute Target
+      id: aml_compute_training
+      uses: Azure/aml-compute@v1
+      with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # Submit a training run to the Azure Machine Learning
     - name: Submit training run
-      run: |
-        az ml run submit-script \
-        --conda-dependencies ./code/train/environment.yaml \
-        --experiment-name iris_experiment \
-        --source-directory ./code/train \
-        --ct cpu-cluster train.py --kernel rbf --penalty 1.0 --model_name ${MODEL_NAME}
-      env:
-        KERNEL: ${{ github.event.inputs.kernel }}
-        PENALTY: ${{ github.event.inputs.penalty }}
-        MODEL_NAME: ${{ github.event.inputs.model-name }}
+      id: aml_run
+      uses: Azure/aml-run@v1
+      with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Create comment for training metrics
       if: ${{ github.event.inputs.issue-numer }} != ''
@@ -98,8 +68,25 @@ jobs:
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         issue-number: ${{ github.event.inputs.issue-number }}
         body: |
-           Train script submitted, 
-           [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }})
+          "${{ steps.aml_run.outputs.run_metrics }}"
+
+    # Register model in Azure Machine Learning model registry
+    - name: Register model
+      id: aml_registermodel
+      uses: Azure/aml-registermodel@v1
+      with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          run_id:  ${{ steps.aml_run.outputs.run_id }}
+          experiment_name: ${{ steps.aml_run.outputs.experiment_name }}
+
+    - name: Create comment for model id
+      if: ${{ github.event.inputs.issue-numer }} != ''
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          The registered model id is : "${{ steps.aml_registermodel.outputs.model_id }}"
 
     - name: Trigger deploy
       if: ${{ github.event_name }} == 'push'
@@ -108,7 +95,8 @@ jobs:
         workflow: aml-deploy
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         inputs: |
-          { "deploy-to": "${DEPLOY_ENV}", "model-name": "${MODEL_NAME}"}
+          { "deploy-to": "${DEPLOY_ENV}", "model-name": "${MODEL_NAME}", "model-version": "${MODEL_VERSION}"}
       env:
         DEPLOY_ENV: "Production"
-        MODEL_NAME: ${{ github.event.inputs.model-name }}
+        MODEL_NAME: ${{ steps.aml_registermodel.outputs.model_name }}
+        MODEL_VERSION: ${{ steps.aml_registermodel.outputs.model_version }}

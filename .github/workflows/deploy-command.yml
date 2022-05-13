@@ -68,19 +68,19 @@ jobs:
             Deployment submitted.
             [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
 
-      - name: azure login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: CLI and workspace setup
-        run: |
-          az extension add -n azure-cli-ml
-          # az configure --defaults group=${GROUP} workspace=$WORKSPACE location=$LOCATION
-        env:
-          WORKSPACE: ${{ github.event.inputs.az-workspace }}
-          GROUP: ${{ github.event.inputs.az-resource-group }}
-          LOCATION: northeurope
+    - name: Configure workspace and resource group
+      id: aml_workspace
+      run: |
+       az extension add -n azure-cli-ml
+       az configure --defaults workspace=$WS group=$RG
+      env:
+        WS: ${{ github.event.inputs.az-workspace }}
+        RG: ${{ github.event.inputs.az-resource-group }}
 
       - name: Deploy model
         run: |
