@@ -39,7 +39,7 @@ runs:
       shell: bash
       run: |
        az extension add -n azure-cli-ml
-       az configure --defaults workspace=$WS group=$RG
+       az ml folder attach -w $WS -g $RG
       env:
         WS: ${{ inputs.az_workspace }}
         RG: ${{ inputs.az_resource_group }}
