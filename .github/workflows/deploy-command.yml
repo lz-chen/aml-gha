@@ -69,20 +69,6 @@ jobs:
             Deployment submitted.
             [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
 
-      - name: Azure login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Configure workspace and resource group
-        id: aml_workspace
-        run: |
-         az extension add -n azure-cli-ml
-         az configure --defaults workspace=$WS group=$RG
-        env:
-          WS: ${{ github.event.inputs.az-workspace }}
-          RG: ${{ github.event.inputs.az-resource-group }}
-
       - name: Deploy model
         run: |
           response=$(az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
