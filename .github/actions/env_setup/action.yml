@@ -16,7 +16,7 @@ inputs:
     required: false
     default: ""
   az_secret:
-    description: "Azure credentials (${{ secrets.AZURE_CREDENTIALS }} cannot be properly parsed here)"
+    description: "Azure credentials (secrets.AZURE_CREDENTIALS cannot be properly parsed here)"
     required: true
 
 runs:
