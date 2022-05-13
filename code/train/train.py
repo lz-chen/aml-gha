@@ -143,12 +143,15 @@ def main(args):
     log_confusion_matrix(cm, labels)
 
     # files saved in the "outputs" folder are automatically uploaded into run history
-    joblib.dump(svm_model, os.path.join("outputs", "model.pkl"))
+    ws_model_path = os.path.join("outputs", "model.pkl")
+    joblib.dump(svm_model, ws_model_path)
     run.log("Model Name", np.str(args.model_name))
+
+    run.upload_file(ws_model_path, ws_model_path)
 
     run.register_model(
         model_name=args.model_name,
-        model_path=os.path.join("outputs", "model.pkl"),  # run outputs path
+        model_path=ws_model_path,  # run outputs path
         description="A classification model for iris dataset",
         model_framework=Model.Framework.SCIKITLEARN,
         model_framework_version=sklearn.__version__,
