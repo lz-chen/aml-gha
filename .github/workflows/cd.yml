@@ -11,7 +11,6 @@ concurrency: deployment-${{ github.ref }}
 jobs:
   deployment-stg:
     timeout-minutes: 30
-    environment: Staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,7 +28,6 @@ jobs:
   deployment-prd:
     needs: [deployment-stg]
     timeout-minutes: 30
-    environment: Production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

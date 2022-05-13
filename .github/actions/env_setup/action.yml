@@ -24,7 +24,7 @@ runs:
   steps:
     - name: Set ref to checkout
       run: |
-          if [ ${{ inputs.event_name }} == 'push' ] && [ ${{ inputs.issue_number }} != '' ]; then 
+          if [ "${{ inputs.event_name }}" == "push" ] && [ "${{ inputs.issue_number }}" != "" ]; then 
            ref=${{ github.ref }}
           else
            ref=refs/pull/${{ inputs.issue_number }}/head

@@ -1,4 +1,4 @@
-name: stale check
+name: stale-check
 
 on:
   schedule:
