@@ -72,7 +72,9 @@ jobs:
       - name: Deploy model
         run: |
           if ['${MODEL_VERSION}' == '']; then
-            MODEL_VERSION=$(az ml model list -l -n ${MODEL_NAME} | awk '/{/,/}/' | jq '.[0].version')
+            az ml model list -l -n ${MODEL_NAME} | awk '/{/,/}/' > tmp.json
+            cat tmp.json
+            MODEL_VERSION=$( jq '.[0].version' < tmp.json)
             echo "No model-version passed, setting it to the newest version ${MODEL_VERSION}"
           fi
           az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
