@@ -69,11 +69,6 @@ jobs:
             Deployment submitted.
             [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
 
-      - name: debug
-        run: | 
-          ls -la
-          cat ./config/inference_config.json
-
       - name: Deploy model
         run: |
           response=$(az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
