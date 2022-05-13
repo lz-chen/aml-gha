@@ -38,6 +38,6 @@ jobs:
           workflow: aml-train
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           inputs: |
-            { "deploy-to": "${DEPLOY_ENV}"}
+            { "environment": "${DEPLOY_ENV}"}
         env:
           DEPLOY_ENV: "Production"
