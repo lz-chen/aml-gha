@@ -147,7 +147,7 @@ def main(args):
     run.log("Model Name", np.str(args.model_name))
 
     run.register_model(
-        model_name=args.modelname,
+        model_name=args.model_name,
         model_path=os.path.join("outputs", "model.pkl"),  # run outputs path
         description="A classification model for iris dataset",
         model_framework=Model.Framework.SCIKITLEARN,
