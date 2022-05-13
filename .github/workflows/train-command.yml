@@ -65,6 +65,14 @@ jobs:
         az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
         az_secret: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: debug
+      run: |
+        echo ${{ github.event_name }}
+        echo ${{ github.event.action }}
+        if [${{ github.event_name }} == 'push'];then
+          echo "eq"
+        if
+
     - name: Submit training run
       run: |
         az ml run submit-script \
@@ -87,10 +95,6 @@ jobs:
            Train script submitted, [Click here to see the deploy run output](${$RUN_URL})
       env:
         RUN_URL: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
-
-    - name: debug
-      run: |
-        echo ${{ github.event_name }}
 
     - name: Trigger deploy
       if: ${{ github.event_name }} == 'push'
