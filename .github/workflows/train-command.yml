@@ -98,7 +98,4 @@ jobs:
         workflow: aml-deploy
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         inputs: |
-          { "deploy-to": "${DEPLOY_ENV}", "model-name": "${MODEL_NAME}"}
-      env:
-        DEPLOY_ENV: Production
-        MODEL_NAME: iris_model
+          { "deploy-to": "Production", "model-name": "iris_model"}
