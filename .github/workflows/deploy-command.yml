@@ -71,8 +71,9 @@ jobs:
 
       - name: Deploy model
         run: |
-          if [${MODEL_VERSION} == '']; then
+          if ['${MODEL_VERSION}' == '']; then
             MODEL_VERSION=$(az ml model list -l -n ${MODEL_NAME} | jq '.[0].version')
+            echo "No model-version passed, setting it to the newest version ${MODEL_VERSION}"
           fi
           az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
            --inference-config-file ./config/inference_config.json \
