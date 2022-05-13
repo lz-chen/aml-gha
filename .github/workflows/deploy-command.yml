@@ -71,8 +71,8 @@ jobs:
 
       - name: Deploy model
         run: |
-          echo '${MODEL_VERSION}'
-          if [ '${MODEL_VERSION}' == '' ]; then
+          echo ${MODEL_VERSION}
+          if [ ${MODEL_VERSION} == '' ]; then
             # az ml model list -l -n ${MODEL_NAME} | awk '/{/,/}/' > tmp.json
              # cat tmp.json
             MODEL_VERSION=$( az ml model list -l -n ${MODEL_NAME} | jq '.[0].version')
