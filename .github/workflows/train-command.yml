@@ -21,15 +21,15 @@ on:
         required: false
       az-workspace:
         description: 'Azure workspace'
-        required: false
+        required: true
         default: "lc-onboarding"
       az-resource-group:
         description: "Azure resource group"
-        required: false
+        required: true
         default: "lc-test"
       kernel:
         description: "Kernel type for SVM model"
-        required: false
+        required: true
         type: choice
         default: "linear"
         options:
@@ -39,11 +39,11 @@ on:
           - "poly"
       penalty:
         description: "Penalty for SVM model"
-        required: false
+        required: true
         default: "0.1"
       model-name:
         description: "Name of the trained model"
-        required: false
+        required: true
         default: "iris_model"
 
 concurrency: train-refs/pull/${{ github.event.inputs.issue-number }}/head
