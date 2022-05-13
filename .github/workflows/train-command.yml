@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-  # todo: uncomment
-#    paths:
-#      - code/**
+    paths:
+      - code/**
 
   workflow_dispatch:
     inputs:
@@ -65,15 +64,6 @@ jobs:
         az_workspace: ${{ github.event.inputs.az-workspace || 'lc-onboarding' }}
         az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
         az_secret: ${{ secrets.AZURE_CREDENTIALS }}
-
-
-#    - name: Configure workspace and resource group
-#      shell: bash
-#      run: |
-#          az configure --defaults workspace=$WS group=$RG
-#      env:
-#        WS: ${{ github.event.inputs.az-workspace || 'lc-onboarding' }}
-#        RG: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
 
     - name: Submit training run
       run: |
