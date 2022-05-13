@@ -72,8 +72,6 @@ jobs:
       - name: Deploy model
         run: |
           if [ -z "${MODEL_VERSION}" ]; then
-            # az ml model list -l -n ${MODEL_NAME} | awk '/{/,/}/' > tmp.json
-             # cat tmp.json
             MODEL_VERSION=$( az ml model list -l -n ${MODEL_NAME} | jq '.[0].version')
             echo "No model-version passed, setting it to the newest version ${MODEL_VERSION}"
           fi
