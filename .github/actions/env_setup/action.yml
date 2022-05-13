@@ -9,12 +9,10 @@ inputs:
     required: false
   az_workspace:
     description: 'Azure workspace'
-    required: false
-    default: ""
+    required: true
   az_resource_group:
     description: "Azure resource group"
-    required: false
-    default: ""
+    required: true
   az_secret:
     description: "Azure credentials (secrets.AZURE_CREDENTIALS cannot be properly parsed here)"
     required: true

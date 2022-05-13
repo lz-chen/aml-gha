@@ -62,8 +62,8 @@ jobs:
       with:
         event_name: ${{ github.event_name }}
         issue_number: ${{ github.event.inputs.issue-number }}
-        az_workspace: ${{ github.event.inputs.az-workspace }} || "lc-onboarding"
-        az_resource_group: ${{ github.event.inputs.az-resource-group }} || "lc-test"
+        az_workspace: ${{ github.event.inputs.az-workspace || 'lc-onboarding' }}
+        az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
         az_secret: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Submit training run
