@@ -38,17 +38,16 @@ runs:
       with:
         ref: ${{ env.REF }}
 
-    - name: Write workspace.json
-      run: |
-        ws=${{ inputs.az_workspace }}
-        rg=${{ inputs.az_resource_group }}
-        if [ $ws != '' ]; then
-          echo "Setting workspace to $ws"
-          jq --arg ws "$ws" '.name = $ws' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
-        fi
-        if [ $rg != '' ]; then
-          echo "Setting resource group to $rg"
-          jq --arg rg "$rg" '.resource_group = $rg' .cloud/.azure/workspace.json > tmp.json && mv tmp.json .cloud/.azure/workspace.json
-        fi
-        echo "Azure workspace setting: $(jq < .cloud/.azure/workspace.json)"
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Configure workspace and resource group
       shell: bash
+      run: |
+       az extension add -n azure-cli-ml
+       az configure --defaults workspace=$WS group=$RG
+      env:
+        WS: ${{ inputs.az_workspace }}
+        RG: ${{ inputs.az_resource_group }}

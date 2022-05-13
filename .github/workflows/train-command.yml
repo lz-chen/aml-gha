@@ -62,22 +62,8 @@ jobs:
       with:
         event_name: ${{ github.event_name }}
         issue_number: ${{ github.event.inputs.issue-number }}
-        az_workspace: ${{ github.event.inputs.az-workspace }}
-        az_resource_group: ${{ github.event.inputs.az-resource-group }}
-
-    - name: Azure login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Configure workspace and resource group
-      id: aml_workspace
-      run: |
-       az extension add -n azure-cli-ml
-       az configure --defaults workspace=$WS group=$RG
-      env:
-        WS: ${{ github.event.inputs.az-workspace }}
-        RG: ${{ github.event.inputs.az-resource-group }}
+        az_workspace: ${{ github.event.inputs.az-workspace }} || "lc-onboarding"
+        az_resource_group: ${{ github.event.inputs.az-resource-group }} || "lc-test"
 
     - name: Submit training run
       run: |
