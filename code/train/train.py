@@ -8,17 +8,13 @@ import numpy as np
 import sklearn
 from azureml.core import Model, Run
 from sklearn import datasets
-from sklearn.metrics import (  # precision_score, recall_score # noqa
-    confusion_matrix,
-    f1_score,
-)
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 
 run = Run.get_context()
 
 
-# test
 def log_confusion_matrix_image(
     cm,
     labels,
@@ -120,16 +116,15 @@ def main(args):
     print("Accuracy of SVM classifier on test set: {:.2f}".format(accuracy))
     run.log("Accuracy", np.float(accuracy))
 
-    # # precision for X_test
-    # precision = precision_score(svm_predictions, data["test"]["y"],
-    # average="weighted")
-    # print("Precision of SVM classifier on test set: {:.2f}".format(precision))
-    # run.log("precision", precision)
-    #
-    # # recall for X_test
-    # recall = recall_score(svm_predictions, data["test"]["y"], average="weighted")
-    # print("Recall of SVM classifier on test set: {:.2f}".format(recall))
-    # run.log("recall", recall)
+    # precision for X_test
+    precision = precision_score(svm_predictions, data["test"]["y"], average="weighted")
+    print("Precision of SVM classifier on test set: {:.2f}".format(precision))
+    run.log("precision", precision)
+
+    # recall for X_test
+    recall = recall_score(svm_predictions, data["test"]["y"], average="weighted")
+    print("Recall of SVM classifier on test set: {:.2f}".format(recall))
+    run.log("recall", recall)
 
     # f1-score for X_test
     f1 = f1_score(svm_predictions, data["test"]["y"], average="weighted")
