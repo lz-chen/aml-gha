@@ -63,9 +63,10 @@ jobs:
 
     - name: Submit training run
       run: |
-        $response=(az ml run submit-script train.py \
-        --conda-dependencies environment.yaml -- source-directory ./code/train \
-        --experiment-name iris_experiment)
+        response=$(az ml run submit-script \
+        --conda-dependencies ./code/train/environment.yaml \
+        --experiment-name iris_experiment \
+        --ct cpu-cluster train.py --kernel rbf --penalty 1.0 --model_name iris_model )
         echo "RUN_SUBMIT_RESPONSE=$response" >> $GITHUB_ENV
 
     - name: Create comment for training metrics

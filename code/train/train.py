@@ -5,7 +5,8 @@ import os
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-from azureml.core import Run
+import sklearn
+from azureml.core import Model, Run
 from sklearn import datasets
 from sklearn.metrics import (  # precision_score, recall_score # noqa
     confusion_matrix,
@@ -142,8 +143,16 @@ def main(args):
     log_confusion_matrix(cm, labels)
 
     # files saved in the "outputs" folder are automatically uploaded into run history
-    joblib.dump(svm_model, os.path.join("outputs", args.modelname))
-    run.log("Model Name", np.str(args.modelname))
+    joblib.dump(svm_model, os.path.join("outputs", "model.pkl"))
+    run.log("Model Name", np.str(args.model_name))
+
+    run.register_model(
+        model_name=args.modelname,
+        model_path=os.path.join("outputs", "model.pkl"),  # run outputs path
+        description="A classification model for iris dataset",
+        model_framework=Model.Framework.SCIKITLEARN,
+        model_framework_version=sklearn.__version__,
+    )
 
 
 def parse_args():
@@ -158,7 +167,7 @@ def parse_args():
         "--penalty", type=float, default=1.0, help="Penalty parameter of the error term"
     )
     parser.add_argument(
-        "--modelname", type=str, default="model.pkl", help="Name of the model file"
+        "--model_name", type=str, default="iris_model", help="Name of the model file"
     )
     args = parser.parse_args()
     return args
