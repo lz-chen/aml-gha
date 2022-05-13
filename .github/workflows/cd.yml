@@ -2,7 +2,7 @@ name: continuous-deployment
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - code/**
 
