@@ -21,6 +21,7 @@ jobs:
           workflow: aml-train
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           wait-for-completion: true
+          wait-for-completion-interval: 10s
 
       - name: Invoke deploy workflow
         uses: aurelien-baudet/workflow-dispatch@v2.1.1
@@ -30,6 +31,7 @@ jobs:
           inputs: |
             { "deploy-to": "Staging"}
           wait-for-completion: true
+          wait-for-completion-interval: 10s
 
 #  deployment-prd:
 #    needs: [deployment-stg]
