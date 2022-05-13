@@ -9,7 +9,8 @@ on:
         default: "Development"
       model-name:
         description: "Name of the model to deploy to"
-        required: true
+        required: false
+        default: "iris_model"
       model-version:
         description: "Version of the model to deploy to"
         required: false

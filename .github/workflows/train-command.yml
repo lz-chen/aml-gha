@@ -19,15 +19,15 @@ on:
         required: false
       az-workspace:
         description: 'Azure workspace'
-        required: true
+        required: false
         default: "lc-onboarding"
       az-resource-group:
         description: "Azure resource group"
-        required: true
+        required: false
         default: "lc-test"
       kernel:
         description: "Kernel type for SVM model"
-        required: true
+        required: false
         type: choice
         default: "linear"
         options:
@@ -37,7 +37,7 @@ on:
           - "poly"
       penalty:
         description: "Penalty for SVM model"
-        required: true
+        required: false
         default: "0.1"
       model-name:
         description: "Name of the trained model"
