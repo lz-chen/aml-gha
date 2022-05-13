@@ -59,6 +59,16 @@ jobs:
         id: vars
         run: echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
 
+      - name: Create comment
+        if: ${{ github.event.inputs.issue-numer != '' }}
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          issue-number:  ${{ github.event.inputs.issue-number }}
+          body: |
+            Deploying model, [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
+
+
       - name: Deploy model
         run: |
           if [${MODEL_VERSION} == '']; then
@@ -75,7 +85,7 @@ jobs:
           GROUP: ${{ github.event.inputs.az-resource-group }}
 
       - name: Create comment
-        if: ${{ github.event.inputs.issue-numer }} != ''
+        if: ${{ github.event.inputs.issue-numer != '' }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
