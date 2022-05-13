@@ -65,28 +65,31 @@ jobs:
         az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
         az_secret: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Create URL to the run output
+      id: vars
+      run: echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+
+    - name: Create comment for training url
+      if: ${{ github.event.inputs.issue-numer != '' }}
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+           Submitting train run, [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
+
     - name: Submit training run
       run: |
         az ml run submit-script \
         --conda-dependencies ./code/train/environment.yaml \
         --experiment-name iris_experiment \
         --source-directory ./code/train \
-        --ct cpu-cluster train.py --kernel rbf --penalty 1.0 --model_name ${MODEL_NAME}
+        --ct cpu-cluster train.py --kernel ${KERNEL} --penalty ${PENALTY} --model_name ${MODEL_NAME}
       env:
-        KERNEL: ${{ github.event.inputs.kernel }}
-        PENALTY: ${{ github.event.inputs.penalty }}
-        MODEL_NAME: ${{ github.event.inputs.model-name }}
+        KERNEL: ${{ github.event.inputs.kernel || 'linear' }}
+        PENALTY: ${{ github.event.inputs.penalty || '0.1' }}
+        MODEL_NAME: ${{ github.event.inputs.model-name || 'iris_model' }}
 
-    - name: Create comment for training metrics
-      if: ${{ github.event.inputs.issue-numer }} != ''
-      uses: peter-evans/create-or-update-comment@v2
-      with:
-        token: ${{ secrets.REPO_ACCESS_TOKEN }}
-        issue-number: ${{ github.event.inputs.issue-number }}
-        body: |
-           Train script submitted, [Click here to see the deploy run output](${$RUN_URL})
-      env:
-        RUN_URL: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
 
     - name: Trigger deploy
       if: ${{ github.event_name == 'push' }}

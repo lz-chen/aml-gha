@@ -13,7 +13,7 @@ on:
       model-version:
         description: "Version of the model to deploy to"
         required: false
-        default: ""
+        default: ''
       az-workspace:
         description: 'Azure workspace'
         required: false
@@ -59,10 +59,21 @@ jobs:
         id: vars
         run: echo ::set-output name=run-url::https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
 
+      - name: Create comment
+        if: ${{ github.event.inputs.issue-numer != '' }}
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          issue-number:  ${{ github.event.inputs.issue-number }}
+          body: |
+            Deploying model, [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
+
+
       - name: Deploy model
         run: |
-          if [${MODEL_VERSION} == '']; then
-            MODEL_VERSION=$(az ml model list -l -n ${MODEL_NAME} | jq '.[0].version')
+          if [ -z "${MODEL_VERSION}" ]; then
+            MODEL_VERSION=$( az ml model list -l -n ${MODEL_NAME} | jq '.[0].version')
+            echo "No model-version passed, setting it to the newest version ${MODEL_VERSION}"
           fi
           az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
            --inference-config-file ./config/inference_config.json \
@@ -75,7 +86,7 @@ jobs:
           GROUP: ${{ github.event.inputs.az-resource-group }}
 
       - name: Create comment
-        if: ${{ github.event.inputs.issue-numer }} != ''
+        if: ${{ github.event.inputs.issue-numer != '' }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
