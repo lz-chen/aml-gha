@@ -66,16 +66,15 @@ jobs:
         az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
         az_secret: ${{ secrets.AZURE_CREDENTIALS }}
 
-#
-#      - name: Configure workspace and resource group
-#        shell: bash
-#        run: |
-#          az extension add -n azure-cli-ml
-#        #       az configure --defaults workspace=$WS group=$RG
-#        env:
-#          WS: ${{ inputs.az_workspace }}
-#          RG: ${{ inputs.az_resource_group }}
-          
+
+      - name: Configure workspace and resource group
+        shell: bash
+        run: |
+            az configure --defaults workspace=$WS group=$RG
+        env:
+          WS: ${{ github.event.inputs.az-workspace || 'lc-onboarding' }}
+          RG: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
+
     - name: Submit training run
       run: |
         az ml run submit-script \
