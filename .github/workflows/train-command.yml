@@ -88,6 +88,10 @@ jobs:
       env:
         RUN_URL: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
 
+    - name: debug
+      run: |
+        echo ${{ github.event_name }}
+
     - name: Trigger deploy
       if: ${{ github.event_name }} == 'push'
       uses: benc-uk/workflow-dispatch@v1
