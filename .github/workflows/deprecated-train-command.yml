@@ -39,7 +39,8 @@ jobs:
         issue_number: ${{ github.event.inputs.issue-number }}
         az_workspace: ${{ github.event.inputs.az-workspace }}
         az_resource_group: ${{ github.event.inputs.az-resource-group }}
-    
+        az_secret: ${{ secrets.AZURE_CREDENTIALS }}
+
     # Connect or Create the Azure Machine Learning Workspace
     - name: Connect/Create Azure Machine Learning Workspace
       id: aml_workspace

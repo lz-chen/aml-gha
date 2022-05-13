@@ -4,20 +4,20 @@ inputs:
   event_name:
     description: 'Name of the event that triggered the workflow'
     required: true
-
   issue_number:
     description: "Issue number that triggered the workflow"
     required: false
-
   az_workspace:
     description: 'Azure workspace'
     required: false
     default: ""
-
   az_resource_group:
     description: "Azure resource group"
     required: false
     default: ""
+  az_secret:
+    description: "Azure credentials (${{ secrets.AZURE_CREDENTIALS }} cannot be properly parsed here)"
+    required: true
 
 runs:
   using: "composite"
@@ -41,7 +41,7 @@ runs:
     - name: Azure login
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ inputs.az_secret }}
 
     - name: Configure workspace and resource group
       shell: bash
