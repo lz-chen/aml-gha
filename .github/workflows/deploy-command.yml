@@ -69,11 +69,16 @@ jobs:
             Deployment submitted.
             [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }}
 
+      - name: debug
+        run: | 
+          ls -la
+          cat ./config/inference_config.json
+
       - name: Deploy model
         run: |
           response=$(az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
-           --inference-config-file ./cloud/.azure/inference_config.json \
-           --deploy-config-file ./cloud/.azure/aks_deploy.json \
+           --inference-config-file ./config/inference_config.json \
+           --deploy-config-file ./config/aks_deploy.json \
            --overwrite --compute-target aks-cluster-new)
           scoring_uri= $(echo "$response" | jq .scoringUri) 
           echo "SCORING_URI=$scoring_uri" >> $GITHUB_ENV
