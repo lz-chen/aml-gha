@@ -1,11 +1,14 @@
 name: continuous-integration
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  # todo: add these back
+#  pull_request:
+#    types: [opened, synchronize, reopened, ready_for_review]
 
   push:
     branches:
       - main
+
+concurrency: ci-${{ github.ref }}
 
 jobs:
   ci:
@@ -13,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
+        if: ${{ github.event_name }} != 'push'
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ secrets.REPO_ACCESS_TOKEN }}
@@ -35,7 +39,7 @@ jobs:
           activate-environment: conda-env
           channel-priority: strict
           environment-file: code/train/environment.yaml
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+          use-only-tar-bz2: true
 
       - name: Style check
         uses: pre-commit/action@v2.0.3

@@ -1,0 +1,107 @@
+# Actions train a model on Azure Machine Learning
+name: aml-train
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - code/**
+
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: "The repository from which the slash command was dispatched"
+        required: false
+      comment-id:
+        description: "The comment-id of the slash command"
+        required: false
+      issue-number:
+        description: "The issue number from which the slash command was created"
+        required: false
+      az-workspace:
+        description: 'Azure workspace'
+        required: false
+        default: ""
+      az-resource-group:
+        description: "Azure resource group"
+        required: false
+        default: ""
+
+concurrency: train-refs/pull/${{ github.event.inputs.issue-number }}/head
+
+jobs:
+  train:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check Out Repository
+      id: checkout_repository
+      uses: actions/checkout@v3
+      
+    - name: Setup
+      uses: ./.github/actions/env_setup
+      with:
+        event_name: ${{ github.event_name }}
+        issue_number: ${{ github.event.inputs.issue-number }}
+        az_workspace: ${{ github.event.inputs.az-workspace }}
+        az_resource_group: ${{ github.event.inputs.az-resource-group }}
+
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Configure workspace and resource group
+      id: aml_workspace
+      run: |
+       az extension add -n azure-cli-ml
+       az configure --defaults workspace=$WS group=$RG
+      env:
+        WS: ${{ github.event.inputs.az-workspace }}
+        RG: ${{ github.event.inputs.az-resource-group }}
+
+    - name: Submit training run
+      run: |
+        $response=(az ml run submit-script train.py \
+        --conda-dependencies environment.yaml -- source-directory ./code/train \
+        --experiment-name iris_experiment)
+        echo "RUN_SUBMIT_RESPONSE=$response" >> $GITHUB_ENV
+
+    - name: Create comment for training metrics
+      if: ${{ github.event.inputs.issue-numer }} != ''
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        issue-number: ${{ github.event.inputs.issue-number }}
+        body: |
+          "${{ env.RUN_SUBMIT_RESPONSE }}"
+
+#    - name: Register model
+#      id: aml_registermodel
+#      uses: Azure/aml-registermodel@v1
+#      with:
+#          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+#          run_id:  ${{ steps.aml_run.outputs.run_id }}
+#          experiment_name: ${{ steps.aml_run.outputs.experiment_name }}
+#
+#    - name: Create comment for model id
+#      if: ${{ github.event.inputs.issue-numer }} != ''
+#      uses: peter-evans/create-or-update-comment@v2
+#      with:
+#        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+#        issue-number: ${{ github.event.inputs.issue-number }}
+#        body: |
+#          The registered model id is : "${{ steps.aml_registermodel.outputs.model_id }}"
+#
+#    - name: Trigger deploy
+#      if: ${{ github.event_name }} == 'push'
+#      uses: benc-uk/workflow-dispatch@v1
+#      with:
+#        workflow: aml-deploy
+#        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+#        inputs: |
+#          { "deploy-to": "${DEPLOY_ENV}", "model-name": "${MODEL_NAME}", "model-version": "${MODEL_VERSION}"}
+#      env:
+#        DEPLOY_ENV: "Production"
+#        MODEL_NAME: ${{ steps.aml_registermodel.outputs.model_name }}
+#        MODEL_VERSION: ${{ steps.aml_registermodel.outputs.model_version }}

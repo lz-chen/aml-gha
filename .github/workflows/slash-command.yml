@@ -5,7 +5,6 @@ on:
     types: [created]
 
 jobs:
-  # This is the dispatch for slash commands in the repo
   slash_command:
     runs-on: ubuntu-latest
     steps:
@@ -16,7 +15,7 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           reaction-token: ${{ github.token.GITHUB_TOKEN }}
           commands: |
-            train
+            train-cli
             deploy
           permission: write
           issue-type: pull-request
