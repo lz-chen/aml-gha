@@ -84,8 +84,9 @@ jobs:
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         issue-number: ${{ github.event.inputs.issue-number }}
         body: |
-           Train script submitted, 
-           [Click here to see the deploy run output](${{ steps.vars.outputs.run-url }})
+           Train script submitted, [Click here to see the deploy run output](${$RUN_URL})
+      env:
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
     - name: Trigger deploy
       if: ${{ github.event_name }} == 'push'

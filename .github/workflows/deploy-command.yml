@@ -51,8 +51,8 @@ jobs:
         with:
           event_name: ${{ github.event_name }}
           issue_number: ${{ github.event.inputs.issue-number }}
-          az_workspace: ${{ github.event.inputs.az-workspace }}
-          az_resource_group: ${{ github.event.inputs.az-resource-group }}
+          az_workspace: ${{ github.event.inputs.az-workspace || 'lc-onboarding' }}
+          az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
           az_secret: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Create URL to the run output
