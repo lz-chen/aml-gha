@@ -7,12 +7,6 @@ inputs:
   issue_number:
     description: "Issue number that triggered the workflow"
     required: false
-  az_workspace:
-    description: 'Azure workspace'
-    required: true
-  az_resource_group:
-    description: "Azure resource group"
-    required: true
   az_secret:
     description: "Azure credentials (secrets.AZURE_CREDENTIALS cannot be properly parsed here)"
     required: true
