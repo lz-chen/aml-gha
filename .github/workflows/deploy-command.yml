@@ -74,8 +74,7 @@ jobs:
           response=$(az ml model deploy --name irisservice --model ${MODEL_NAME}:${MODEL_VERSION} \
            --inference-config-file ./cloud/.azure/inference_config.json \
            --deploy-config-file ./cloud/.azure/aks_deploy.json \
-           --overwrite --compute-target aks-cluster-new \
-           --workspace-name ${WORKSPACE} --resource-group ${GROUP})
+           --overwrite --compute-target aks-cluster-new)
           scoring_uri= $(echo "$response" | jq .scoringUri) 
           echo "SCORING_URI=$scoring_uri" >> $GITHUB_ENV
 
