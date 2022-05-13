@@ -13,7 +13,7 @@ on:
       model-version:
         description: "Version of the model to deploy to"
         required: false
-        default: ""
+        default: ''
       az-workspace:
         description: 'Azure workspace'
         required: false
@@ -71,8 +71,7 @@ jobs:
 
       - name: Deploy model
         run: |
-          echo ${MODEL_VERSION}
-          if [ ${MODEL_VERSION} == '' ]; then
+          if [ -z "${MODEL_VERSION}" ]; then
             # az ml model list -l -n ${MODEL_NAME} | awk '/{/,/}/' > tmp.json
              # cat tmp.json
             MODEL_VERSION=$( az ml model list -l -n ${MODEL_NAME} | jq '.[0].version')
