@@ -99,4 +99,3 @@ jobs:
       env:
         DEPLOY_ENV: "Production"
         MODEL_NAME: ${{ github.event.inputs.model-name }}
-        ISSUE_NUMBER: ${{ github.event.inputs.issue-number }}
