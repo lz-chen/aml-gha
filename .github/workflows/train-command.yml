@@ -1,12 +1,11 @@
 # Actions train a model on Azure Machine Learning
 name: aml-train
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - code/**
-
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - code/**
   workflow_dispatch:
     inputs:
       repository:
