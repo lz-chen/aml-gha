@@ -65,14 +65,6 @@ jobs:
         az_resource_group: ${{ github.event.inputs.az-resource-group || 'lc-test' }}
         az_secret: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: debug
-      run: |
-        echo ${{ github.event_name }}
-        echo ${{ github.event.action }}
-        if [${{ github.event_name }} == 'push'];then
-          echo "eq"
-        fi
-
     - name: Submit training run
       run: |
         az ml run submit-script \
@@ -103,7 +95,7 @@ jobs:
         workflow: aml-deploy
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         inputs: |
-          { "deploy-to": "${DEPLOY_ENV}", "model-name": "${MODEL_NAME}", "issue-number": "${ISSUE_NUMBER}"}
+          { "deploy-to": "${DEPLOY_ENV}", "model-name": "${MODEL_NAME}"}
       env:
         DEPLOY_ENV: "Production"
         MODEL_NAME: ${{ github.event.inputs.model-name }}
