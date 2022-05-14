@@ -22,7 +22,12 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v3
-
+      
+      - name: check secret
+        run: |
+         echo "${{ secrets.AZURE_CREDENTIALS }}" >> tmp.json
+         cat tmp.json
+      
       - name: Cache conda
         uses: actions/cache@v2
         env:
